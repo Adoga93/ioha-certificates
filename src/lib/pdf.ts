@@ -104,7 +104,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
       
       let finalSize = 10;
       let tWidth = fontHelvetica.widthOfTextAtSize(actualTitle, finalSize);
-      const maxWidth = 230; // Max allowed width for signature labels
+      const maxWidth = 160; // Max allowed width for signature labels
       if (tWidth > maxWidth) {
           finalSize = 10 * (maxWidth / tWidth);
           tWidth = fontHelvetica.widthOfTextAtSize(actualTitle, finalSize);
