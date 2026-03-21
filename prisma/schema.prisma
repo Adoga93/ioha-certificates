@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Certificate {
+  id            String   @id @default(cuid())
+  name          String
+  courseName    String
+  issueDate     DateTime
+  certificateId String   @unique
+  webinarId     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model SignatorySettings {
+  id              Int      @id @default(1)
+  signatoryName   String   @default("M. Olota")
+  signatoryTitle  String   @default("IOHA President")
+  signatureImage  String?
+  signatory2Name  String   @default("Chairman")
+  signatory2Title String   @default("Chairman Education Affairs IOHA")
+  signature2Image String?
+  certificateType String   @default("Of Attendance At")
+  presentedBy     String   @default("")
+  presentationDate String  @default("")
+  templateId      String   @default("template1")
+  updatedAt       DateTime @updatedAt
+}
+
+model Webinar {
+  id               String   @id @default(cuid())
+  webinarId        String   @unique
+  webinarName      String
+  webinarBannerImage String?
+  
+  certificateType  String   @default("Of Attendance At")
+  presentedBy      String   @default("")
+  presentationDate String   @default("")
+  signatoryName    String   @default("M. Olota")
+  signatoryTitle   String   @default("IOHA President")
+  signatureImage   String?
+  signatory2Name   String   @default("Chairman")
+  signatory2Title  String   @default("Chairman Education Affairs IOHA")
+  signature2Image  String?
+  templateId       String   @default("template1")
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
