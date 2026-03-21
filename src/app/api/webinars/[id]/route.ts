@@ -24,3 +24,24 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params;
+
+    // First delete all associated certificates to avoid orphan records
+    await prisma.certificate.deleteMany({
+      where: { webinarId: id }
+    });
+
+    // Then delete the webinar itself
+    const deletedWebinar = await prisma.webinar.delete({
+      where: { webinarId: id }
+    });
+
+    return NextResponse.json({ success: true, deleted: deletedWebinar });
+  } catch (error) {
+    console.error('Failed to delete webinar:', error);
+    return NextResponse.json({ error: 'Failed to delete webinar' }, { status: 500 });
+  }
+}

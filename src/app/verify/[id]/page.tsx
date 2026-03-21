@@ -17,6 +17,13 @@ export default async function VerifyPage(props: { params: Promise<{ id: string }
         notFound();
     }
 
+    let webinar = null;
+    if (certificate.webinarId) {
+        webinar = await prisma.webinar.findUnique({
+            where: { webinarId: certificate.webinarId }
+        });
+    }
+
     return (
         <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-ioha-slate text-ioha-navy">
             <div className="bg-white p-8 md:p-12 rounded-3xl shadow-2xl max-w-2xl w-full border-t-8 border-ioha-gold text-center space-y-8">
@@ -51,6 +58,21 @@ export default async function VerifyPage(props: { params: Promise<{ id: string }
                             {certificate.certificateId}
                         </p>
                     </div>
+
+                    {webinar && (
+                        <div className="pt-4 border-t border-gray-200 mt-4 grid grid-cols-2 gap-4">
+                            <div className="col-span-2">
+                                <p className="text-sm font-semibold opacity-50 uppercase tracking-wider">Webinar / Event Focus</p>
+                                <p className="font-medium text-lg text-ioha-navy">{webinar.webinarName}</p>
+                            </div>
+                            {webinar.presentationDate && (
+                                <div className="col-span-2">
+                                    <p className="text-sm font-semibold opacity-50 uppercase tracking-wider">Held On</p>
+                                    <p className="font-medium">{new Date(webinar.presentationDate).toLocaleDateString()}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="pt-4 border-t border-gray-100">

@@ -109,6 +109,18 @@ export default function AdminSettings() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure? This will permanently delete this webinar and ALL verification data associated with it!")) return;
+        try {
+            const res = await fetch(`/api/webinars/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error("Failed to delete");
+            fetchWebinars();
+        } catch (err) {
+            console.error(err);
+            alert("Error deleting webinar");
+        }
+    };
+
     const handlePreview = async () => {
         setPreviewing(true);
         try {
@@ -183,7 +195,12 @@ export default function AdminSettings() {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         {qrCodeUrls[w.webinarId] && (
-                                            <img src={qrCodeUrls[w.webinarId]} alt="QR Code" className="w-24 h-24 rounded shadow-sm border border-gray-100" />
+                                            <div className="flex flex-col gap-1 items-center">
+                                                <img src={qrCodeUrls[w.webinarId]} alt="QR Code" className="w-24 h-24 rounded shadow-sm border border-gray-100" />
+                                                <a href={qrCodeUrls[w.webinarId]} download={`QR-${w.webinarId}.png`} className="text-[10px] text-blue-500 hover:text-blue-700 underline uppercase tracking-wider font-bold text-center leading-tight">
+                                                    Download<br/>QR Code
+                                                </a>
+                                            </div>
                                         )}
                                         <div className="flex flex-col gap-2 w-full">
                                             <button 
@@ -206,6 +223,12 @@ export default function AdminSettings() {
                                             >
                                                 View Report
                                             </a>
+                                            <button 
+                                                onClick={() => handleDelete(w.webinarId)}
+                                                className="text-xs text-red-500 hover:text-red-700 underline font-medium text-center mt-1 transition-colors"
+                                            >
+                                                Delete Test Webinar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
