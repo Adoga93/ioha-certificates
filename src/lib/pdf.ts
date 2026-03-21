@@ -91,10 +91,10 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
         try {
           const img = sigImage.includes('jpeg') || sigImage.includes('jpg') ? await pdfDoc.embedJpg(imgBytes) : await pdfDoc.embedPng(imgBytes);
           const sDims = img.scaleToFit(180, 60);
-          page.drawImage(img, { x: xPos + 10, y: yPos + 5, width: sDims.width, height: sDims.height });
+          page.drawImage(img, { x: xPos + 10, y: yPos + 10, width: sDims.width, height: sDims.height });
         } catch (e) {}
       } else if (sigName) {
-        page.drawText(sigName, { x: xPos + 20, y: yPos + 15, size: 30, font: fontGreatVibes, color: black });
+        page.drawText(sigName, { x: xPos + 20, y: yPos + 28, size: 30, font: fontGreatVibes, color: black });
       }
     
       page.drawLine({ start: { x: xPos, y: yPos }, end: { x: xPos + 200, y: yPos }, thickness: 1, color: navy });
