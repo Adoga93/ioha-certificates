@@ -19,10 +19,11 @@ export interface CertificateData {
   presentedBy?: string;
   presentationDate?: string;
   templateId?: string;
+  contactHours?: string;
 }
 
 export async function generateCertificatePdf(data: CertificateData): Promise<Uint8Array> {
-  const { name, courseName, issueDate, certificateId, signatoryName, signatoryTitle, signatureImage, signatory2Name, signatory2Title, signature2Image, certificateType, presentedBy, presentationDate, templateId = 'template1' } = data;
+  const { name, courseName, issueDate, certificateId, signatoryName, signatoryTitle, signatureImage, signatory2Name, signatory2Title, signature2Image, certificateType, presentedBy, presentationDate, contactHours = '60 Minutes', templateId = 'template1' } = data;
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
@@ -84,33 +85,36 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   };
 
   const drawSignature = async (sigImage: string | null | undefined, sigName: string | undefined, sigTitle: string | undefined, xPos: number, yPos: number, fallbackLayout: boolean = false) => {
-      
       if (sigImage) {
         const base64Data = sigImage.split(',')[1] || sigImage;
         const imgBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
         try {
           const img = sigImage.includes('jpeg') || sigImage.includes('jpg') ? await pdfDoc.embedJpg(imgBytes) : await pdfDoc.embedPng(imgBytes);
-          const sDims = img.scaleToFit(180, 60);
-          page.drawImage(img, { x: xPos + 10, y: yPos + 10, width: sDims.width, height: sDims.height });
+          const sDims = img.scaleToFit(200, 100);
+          page.drawImage(img, { x: xPos + (200 - sDims.width)/2, y: yPos + 5, width: sDims.width, height: sDims.height });
         } catch (e) {}
       } else if (sigName) {
-        page.drawText(sigName, { x: xPos + 20, y: yPos + 28, size: 30, font: fontGreatVibes, color: black });
+        let finalSize = 30;
+        let tWidth = fontGreatVibes.widthOfTextAtSize(sigName, finalSize);
+        if (tWidth > 200) { finalSize = 30 * (200 / tWidth); tWidth = fontGreatVibes.widthOfTextAtSize(sigName, finalSize); }
+        page.drawText(sigName, { x: xPos + 100 - (tWidth/2), y: yPos + 22, size: finalSize, font: fontGreatVibes, color: black });
       }
     
       page.drawLine({ start: { x: xPos, y: yPos }, end: { x: xPos + 200, y: yPos }, thickness: 1, color: navy });
     
       const defaultTitle = fallbackLayout ? "IOHA Official" : "IOHA President";
       const actualTitle = sigTitle || defaultTitle;
+      const actualName = sigName || "M. Olota";
+      
+      let nSize = 12;
+      let nWidth = fontHelveticaBold.widthOfTextAtSize(actualName, nSize);
+      if (nWidth > 180) { nSize = 12 * (180 / nWidth); nWidth = fontHelveticaBold.widthOfTextAtSize(actualName, nSize); }
+      page.drawText(actualName, { x: xPos + 100 - (nWidth/2), y: yPos - 15, size: nSize, font: fontHelveticaBold, color: black });
       
       let finalSize = 10;
       let tWidth = fontHelvetica.widthOfTextAtSize(actualTitle, finalSize);
-      const maxWidth = 160; // Max allowed width for signature labels
-      if (tWidth > maxWidth) {
-          finalSize = 10 * (maxWidth / tWidth);
-          tWidth = fontHelvetica.widthOfTextAtSize(actualTitle, finalSize);
-      }
-      
-      page.drawText(actualTitle, { x: xPos + 100 - (tWidth / 2), y: yPos - 15, size: finalSize, font: fontHelvetica, color: black });
+      if (tWidth > 160) { finalSize = 10 * (160 / tWidth); tWidth = fontHelvetica.widthOfTextAtSize(actualTitle, finalSize); }
+      page.drawText(actualTitle, { x: xPos + 100 - (tWidth/2), y: yPos - 27, size: finalSize, font: fontHelvetica, color: black });
   };
 
   // --- BACKGROUND & LOGO rendering based on selected template ---
@@ -198,7 +202,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   
   page.drawText(`Issued: ${iDateStr}`, { x: qrTextX, y: qrY + 29, size: 8, font: fontHelveticaBold, color: navy });
   page.drawText("IOHA VERIFIED", { x: qrTextX, y: qrY + 18, size: 9, font: fontHelveticaBold, color: gold });
-  page.drawText(`#${certificateId}`, { x: qrTextX, y: qrY + 7, size: 8, font: fontHelvetica, color: black });
+  page.drawText(`${contactHours}`, { x: qrTextX, y: qrY + 7, size: 8, font: fontHelvetica, color: black });
 
   return await pdfDoc.save();
 }

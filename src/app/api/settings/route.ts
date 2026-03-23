@@ -15,7 +15,8 @@ export async function GET() {
                     signatory2Title: "Chairman Education Affairs IOHA",
                     certificateType: "Of Attendance At",
                     presentedBy: "IOHA Training Committee",
-                    presentationDate: new Date().toISOString().split('T')[0]
+                    presentationDate: new Date().toISOString().split('T')[0],
+                    contactHours: "60 Minutes"
                 }
             });
         }
@@ -41,6 +42,7 @@ export async function PUT(request: Request) {
                 presentedBy: body.presentedBy,
                 presentationDate: body.presentationDate,
                 templateId: body.templateId,
+                contactHours: body.contactHours,
             },
             create: {
                 id: 1,
@@ -54,6 +56,7 @@ export async function PUT(request: Request) {
                 presentedBy: body.presentedBy || "IOHA Training Committee",
                 presentationDate: body.presentationDate || new Date().toISOString().split('T')[0],
                 templateId: body.templateId || "template1",
+                contactHours: body.contactHours || "60 Minutes",
             }
         });
         return NextResponse.json(settings);

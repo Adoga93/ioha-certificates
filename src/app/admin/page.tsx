@@ -19,6 +19,7 @@ export default function AdminSettings() {
     const [presentedBy, setPresentedBy] = useState("IOHA Training Committee");
     const [presentationDate, setPresentationDate] = useState("");
     const [templateId, setTemplateId] = useState("template1");
+    const [contactHours, setContactHours] = useState("60 Minutes");
 
     const [loading, setLoading] = useState(false);
     const [previewing, setPreviewing] = useState(false);
@@ -66,6 +67,7 @@ export default function AdminSettings() {
                     setPresentedBy(data.presentedBy || "IOHA Training Committee");
                     setPresentationDate(data.presentationDate || "");
                     setTemplateId(data.templateId || "template1");
+                    setContactHours(data.contactHours || "60 Minutes");
                 }
             })
             .catch(console.error);
@@ -92,6 +94,7 @@ export default function AdminSettings() {
                     presentedBy,
                     presentationDate,
                     templateId,
+                    contactHours,
                 })
             });
             if (!res.ok) throw new Error("Failed to create webinar");
@@ -139,6 +142,7 @@ export default function AdminSettings() {
                     presentedBy,
                     presentationDate,
                     templateId,
+                    contactHours,
                 })
             });
             if (!res.ok) throw new Error("Failed to generate preview");
@@ -306,6 +310,18 @@ export default function AdminSettings() {
                                         <option value="template1">Template 1 - Classic (Navy & Gold Border)</option>
                                         <option value="template2">Template 2 - Elegant (Fleur-de-lis Background)</option>
                                         <option value="template3">Template 3 - Leafy Minimal Border</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2 md:col-span-2">
+                                    <label className="text-sm font-semibold opacity-80 uppercase tracking-wide">Education Contact Hours</label>
+                                    <select
+                                        value={contactHours}
+                                        onChange={(e) => setContactHours(e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-ioha-navy/20 bg-white"
+                                    >
+                                        <option value="60 Minutes">60 Minutes</option>
+                                        <option value="90 Minutes">90 Minutes</option>
+                                        <option value="120 Minutes">120 Minutes</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">
