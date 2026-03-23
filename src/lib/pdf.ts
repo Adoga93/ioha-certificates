@@ -42,7 +42,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   const fontHelvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontTimesItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic);
 
-  const greatVibesPath = path.join(process.cwd(), 'public', 'fonts', 'GreatVibes-Regular.ttf');
+  const greatVibesPath = path.join(process.cwd(), 'public', 'fonts', 'Parisienne-Regular.ttf');
   const greatVibesBytes = fs.readFileSync(greatVibesPath);
   const fontGreatVibes = await pdfDoc.embedFont(greatVibesBytes);
 
