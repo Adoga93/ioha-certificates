@@ -53,6 +53,7 @@ export async function POST(request: Request) {
                 presentedBy: "IOHA Training Committee",
                 presentationDate: new Date().toISOString().split('T')[0],
                 templateId: "template1",
+                contactHours: "60 Minutes",
                 updatedAt: new Date()
             };
         }
