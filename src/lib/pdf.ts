@@ -169,7 +169,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   drawCenteredText('CERTIFICATE', height - 200, fontHelveticaBold, 48, black);
   drawCenteredText(certificateType || 'Of Attendance At', height - 240, fontTimesItalic, 20, black);
   drawCenteredText(courseName, height - 290, fontHelveticaBold, 16, navy);
-  drawCenteredText(`Presented By ${presentedBy || ''}`, height - 325, fontTimesItalic, 14, black);
+  drawCenteredText(`Presented by: ${presentedBy || ''}`, height - 325, fontTimesItalic, 14, black);
   
   if (presentationDate) {
       drawCenteredText(`On ${new Date(presentationDate).toLocaleDateString()}`, height - 345, fontHelveticaBold, 14, navy);
