@@ -91,7 +91,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
         try {
           const img = sigImage.includes('jpeg') || sigImage.includes('jpg') ? await pdfDoc.embedJpg(imgBytes) : await pdfDoc.embedPng(imgBytes);
           const sDims = img.scaleToFit(200, 100);
-          page.drawImage(img, { x: xPos + (200 - sDims.width)/2, y: yPos + 5, width: sDims.width, height: sDims.height });
+          page.drawImage(img, { x: xPos + (200 - sDims.width)/2, y: yPos - 15, width: sDims.width, height: sDims.height });
         } catch (e) {}
       } else if (sigName) {
         let finalSize = 30;
