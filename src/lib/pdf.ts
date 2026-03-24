@@ -52,7 +52,6 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   const gold = rgb(212 / 255, 175 / 255, 55 / 255);
   const white = rgb(1, 1, 1);
   const black = rgb(0, 0, 0);
-  const gray = rgb(0.5, 0.5, 0.5);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://certificates.ioha.org';
   const qrBase64 = await QRCode.toDataURL(`${baseUrl}/verify/${certificateId}`, {
@@ -73,7 +72,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
     console.error("Failed to load IOHA logo", e);
   }
 
-  const drawCenteredText = (text: string, yPos: number, font: PDFFont, size: number, color: any, xOffset = 0) => {
+  const drawCenteredText = (text: string, yPos: number, font: PDFFont, size: number, color: import('pdf-lib').Color, xOffset = 0) => {
     let tWidth = font.widthOfTextAtSize(text, size);
     let finalSize = size;
     const maxWidth = 640; // Safe zone to guarantee no border collision
@@ -92,7 +91,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
           const img = sigImage.includes('jpeg') || sigImage.includes('jpg') ? await pdfDoc.embedJpg(imgBytes) : await pdfDoc.embedPng(imgBytes);
           const sDims = img.scaleToFit(200, 100);
           page.drawImage(img, { x: xPos + (200 - sDims.width)/2, y: yPos - 15, width: sDims.width, height: sDims.height });
-        } catch (e) {}
+        } catch {}
       } else if (sigName) {
         let finalSize = 30;
         let tWidth = fontGreatVibes.widthOfTextAtSize(sigName, finalSize);

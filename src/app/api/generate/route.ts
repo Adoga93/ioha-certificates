@@ -10,24 +10,21 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { name, courseName, issueDate } = body;
 
-        let settings = await prisma.signatorySettings.findUnique({ where: { id: 1 } });
-        if (!settings) {
-            settings = {
-                id: 1,
-                signatoryName: "M. Olota",
-                signatoryTitle: "IOHA President",
-                signatureImage: null,
-                signatory2Name: "Chairman",
-                signatory2Title: "Chairman Education Affairs IOHA",
-                signature2Image: null,
-                certificateType: "Of Attendance At",
-                presentedBy: "Occupational Hygiene Masterclass",
-                presentationDate: new Date().toISOString().split('T')[0],
-                templateId: "template1",
-                contactHours: "60 Minutes",
-                updatedAt: new Date()
-            };
-        }
+        const settings = await prisma.signatorySettings.findUnique({ where: { id: 1 } }) || {
+            id: 1,
+            signatoryName: "M. Olota",
+            signatoryTitle: "IOHA President",
+            signatureImage: null,
+            signatory2Name: "Chairman",
+            signatory2Title: "Chairman Education Affairs IOHA",
+            signature2Image: null,
+            certificateType: "Of Attendance At",
+            presentedBy: "Occupational Hygiene Masterclass",
+            presentationDate: new Date().toISOString().split('T')[0],
+            templateId: "template1",
+            contactHours: "60 Minutes",
+            updatedAt: new Date()
+        } as any;
 
         // Generate a unique certificate ID
         const certificateId = crypto.randomUUID().split('-')[0].toUpperCase();
@@ -69,8 +66,8 @@ export async function POST(request: Request) {
                 'Content-Disposition': `attachment; filename="ioha-certificate-${certificateId}.pdf"`,
             },
         });
-    } catch (error: any) {
-        console.error("PDF generation error:", error);
-        return NextResponse.json({ error: error.message || 'Failed to generate PDF' }, { status: 500 });
+    } catch (err) {
+        console.error("PDF generation error:", err);
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Failed to generate PDF' }, { status: 500 });
     }
 }

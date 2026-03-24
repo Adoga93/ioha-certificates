@@ -39,24 +39,21 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'CSV is empty or invalid' }, { status: 400 });
         }
 
-        let settings = await prisma.signatorySettings.findUnique({ where: { id: 1 } });
-        if (!settings) {
-            settings = {
-                id: 1,
-                signatoryName: "M. Olota",
-                signatoryTitle: "IOHA President",
-                signatureImage: null,
-                signatory2Name: "Chairman",
-                signatory2Title: "Chairman Education Affairs IOHA",
-                signature2Image: null,
-                certificateType: "Of Attendance At",
-                presentedBy: "IOHA Training Committee",
-                presentationDate: new Date().toISOString().split('T')[0],
-                templateId: "template1",
-                contactHours: "60 Minutes",
-                updatedAt: new Date()
-            };
-        }
+        const settings = await prisma.signatorySettings.findUnique({ where: { id: 1 } }) || {
+            id: 1,
+            signatoryName: "M. Olota",
+            signatoryTitle: "IOHA President",
+            signatureImage: null,
+            signatory2Name: "Chairman",
+            signatory2Title: "Chairman Education Affairs IOHA",
+            signature2Image: null,
+            certificateType: "Of Attendance At",
+            presentedBy: "IOHA Training Committee",
+            presentationDate: new Date().toISOString().split('T')[0],
+            templateId: "template1",
+            contactHours: "60 Minutes",
+            updatedAt: new Date()
+        } as any;
 
         const zip = new JSZip();
 
@@ -123,8 +120,8 @@ export async function POST(request: Request) {
                 'Content-Disposition': `attachment; filename="ioha-certificates-batch.zip"`,
             },
         });
-    } catch (error: any) {
-        console.error("Batch generation error:", error);
-        return NextResponse.json({ error: error.message || 'Failed to process batch generation' }, { status: 500 });
+    } catch (err) {
+        console.error("Batch generation error:", err);
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Failed to process batch generation' }, { status: 500 });
     }
 }
