@@ -205,8 +205,10 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   
   page.drawText(`Issued: ${iDateStr}`, { x: qrTextX, y: qrY + 29, size: 8, font: fontHelveticaBold, color: navy });
   page.drawText("IOHA VERIFIED", { x: qrTextX, y: qrY + 18, size: 9, font: fontHelveticaBold, color: gold });
-  
-  const displayHours = contactHours.replace(/minutes/i, 'CPD minutes').replace(/minute/i, 'CPD minute');
+  let displayHours = contactHours;
+  if (!displayHours.toLowerCase().includes('cpd')) {
+    displayHours = displayHours.replace(/minutes/i, 'CPD minutes').replace(/minute/i, 'CPD minute');
+  }
   page.drawText(`${displayHours}`, { x: qrTextX, y: qrY + 7, size: 8, font: fontHelvetica, color: black });
 
   return await pdfDoc.save();
