@@ -19,7 +19,7 @@ export default function AdminSettings() {
     const [presentedBy, setPresentedBy] = useState("IOHA Training Committee");
     const [presentationDate, setPresentationDate] = useState("");
     const [templateId, setTemplateId] = useState("template1");
-    const [contactHours, setContactHours] = useState("60 Minutes");
+    const [contactHours, setContactHours] = useState("60 CPD minutes");
 
     const [loading, setLoading] = useState(false);
     const [previewing, setPreviewing] = useState(false);
@@ -67,7 +67,7 @@ export default function AdminSettings() {
                     setPresentedBy(data.presentedBy || "IOHA Training Committee");
                     setPresentationDate(data.presentationDate || "");
                     setTemplateId(data.templateId || "template1");
-                    setContactHours(data.contactHours || "60 Minutes");
+                    setContactHours(data.contactHours || "60 CPD minutes");
                 }
             })
             .catch(console.error);
@@ -319,9 +319,9 @@ export default function AdminSettings() {
                                         onChange={(e) => setContactHours(e.target.value)}
                                         className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-ioha-navy/20 bg-white"
                                     >
-                                        <option value="60 Minutes">60 Minutes</option>
-                                        <option value="90 Minutes">90 Minutes</option>
-                                        <option value="120 Minutes">120 Minutes</option>
+                                        <option value="60 CPD minutes">60 CPD minutes</option>
+                                        <option value="90 CPD minutes">90 CPD minutes</option>
+                                        <option value="120 CPD minutes">120 CPD minutes</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">

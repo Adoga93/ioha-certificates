@@ -23,7 +23,7 @@ export interface CertificateData {
 }
 
 export async function generateCertificatePdf(data: CertificateData): Promise<Uint8Array> {
-  const { name, courseName, issueDate, certificateId, signatoryName, signatoryTitle, signatureImage, signatory2Name, signatory2Title, signature2Image, certificateType, presentedBy, presentationDate, contactHours = '60 Minutes', templateId = 'template1' } = data;
+  const { name, courseName, issueDate, certificateId, signatoryName, signatoryTitle, signatureImage, signatory2Name, signatory2Title, signature2Image, certificateType, presentedBy, presentationDate, contactHours = '60 CPD minutes', templateId = 'template1' } = data;
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
@@ -46,6 +46,10 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   const greatVibesPath = path.join(process.cwd(), 'public', 'fonts', 'Parisienne-Regular.ttf');
   const greatVibesBytes = fs.readFileSync(greatVibesPath);
   const fontGreatVibes = await pdfDoc.embedFont(greatVibesBytes);
+
+  const herrVonPath = path.join(process.cwd(), 'public', 'fonts', 'HerrVonMuellerhoff-Regular.ttf');
+  const herrVonBytes = fs.readFileSync(herrVonPath);
+  const fontSignature = await pdfDoc.embedFont(herrVonBytes);
 
   // Colors
   const navy = rgb(0 / 255, 33 / 255, 71 / 255);
@@ -93,10 +97,10 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
           page.drawImage(img, { x: xPos + (200 - sDims.width)/2, y: yPos - 15, width: sDims.width, height: sDims.height });
         } catch {}
       } else if (sigName) {
-        let finalSize = 30;
-        let tWidth = fontGreatVibes.widthOfTextAtSize(sigName, finalSize);
-        if (tWidth > 200) { finalSize = 30 * (200 / tWidth); tWidth = fontGreatVibes.widthOfTextAtSize(sigName, finalSize); }
-        page.drawText(sigName, { x: xPos + 100 - (tWidth/2), y: yPos + 22, size: finalSize, font: fontGreatVibes, color: black });
+        let finalSize = 50; // increased size because HerrVonMuellerhoff is quite small natively
+        let tWidth = fontSignature.widthOfTextAtSize(sigName, finalSize);
+        if (tWidth > 200) { finalSize = 50 * (200 / tWidth); tWidth = fontSignature.widthOfTextAtSize(sigName, finalSize); }
+        page.drawText(sigName, { x: xPos + 100 - (tWidth/2), y: yPos + 22, size: finalSize, font: fontSignature, color: black });
       }
     
       page.drawLine({ start: { x: xPos, y: yPos }, end: { x: xPos + 200, y: yPos }, thickness: 1, color: navy });
@@ -201,7 +205,9 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   
   page.drawText(`Issued: ${iDateStr}`, { x: qrTextX, y: qrY + 29, size: 8, font: fontHelveticaBold, color: navy });
   page.drawText("IOHA VERIFIED", { x: qrTextX, y: qrY + 18, size: 9, font: fontHelveticaBold, color: gold });
-  page.drawText(`${contactHours}`, { x: qrTextX, y: qrY + 7, size: 8, font: fontHelvetica, color: black });
+  
+  const displayHours = contactHours.replace(/minutes/i, 'CPD minutes').replace(/minute/i, 'CPD minute');
+  page.drawText(`${displayHours}`, { x: qrTextX, y: qrY + 7, size: 8, font: fontHelvetica, color: black });
 
   return await pdfDoc.save();
 }

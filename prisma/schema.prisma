@@ -32,7 +32,7 @@ model SignatorySettings {
   certificateType String   @default("Of Attendance At")
   presentedBy     String   @default("")
   presentationDate String  @default("")
-  contactHours    String   @default("60 Minutes")
+  contactHours    String   @default("60 CPD minutes")
   templateId      String   @default("template1")
   updatedAt       DateTime @updatedAt
 }
@@ -52,7 +52,7 @@ model Webinar {
   signatory2Name   String   @default("Chairman")
   signatory2Title  String   @default("Chairman Education Affairs IOHA")
   signature2Image  String?
-  contactHours     String   @default("60 Minutes")
+  contactHours     String   @default("60 CPD minutes")
   templateId       String   @default("template1")
 
   createdAt        DateTime @default(now())
