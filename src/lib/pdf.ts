@@ -47,9 +47,9 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   const greatVibesBytes = fs.readFileSync(greatVibesPath);
   const fontGreatVibes = await pdfDoc.embedFont(greatVibesBytes);
 
-  const herrVonPath = path.join(process.cwd(), 'public', 'fonts', 'HerrVonMuellerhoff-Regular.ttf');
-  const herrVonBytes = fs.readFileSync(herrVonPath);
-  const fontSignature = await pdfDoc.embedFont(herrVonBytes);
+  const signatureFontPath = path.join(process.cwd(), 'public', 'fonts', 'Zeyada.ttf');
+  const signatureFontBytes = fs.readFileSync(signatureFontPath);
+  const fontSignature = await pdfDoc.embedFont(signatureFontBytes);
 
   // Colors
   const navy = rgb(0 / 255, 33 / 255, 71 / 255);
