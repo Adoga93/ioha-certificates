@@ -47,7 +47,7 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   const greatVibesBytes = fs.readFileSync(greatVibesPath);
   const fontGreatVibes = await pdfDoc.embedFont(greatVibesBytes);
 
-  const signatureFontPath = path.join(process.cwd(), 'public', 'fonts', 'Zeyada.ttf');
+  const signatureFontPath = path.join(process.cwd(), 'public', 'fonts', 'MrDeHaviland-Regular.ttf');
   const signatureFontBytes = fs.readFileSync(signatureFontPath);
   const fontSignature = await pdfDoc.embedFont(signatureFontBytes);
 
@@ -97,10 +97,11 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
           page.drawImage(img, { x: xPos + (200 - sDims.width)/2, y: yPos - 15, width: sDims.width, height: sDims.height });
         } catch {}
       } else if (sigName) {
-        let finalSize = 50; // increased size because HerrVonMuellerhoff is quite small natively
-        let tWidth = fontSignature.widthOfTextAtSize(sigName, finalSize);
-        if (tWidth > 200) { finalSize = 50 * (200 / tWidth); tWidth = fontSignature.widthOfTextAtSize(sigName, finalSize); }
-        page.drawText(sigName, { x: xPos + 100 - (tWidth/2), y: yPos + 22, size: finalSize, font: fontSignature, color: black });
+        const safeSigName = sigName.replace(/\./g, '');
+        let finalSize = 50; 
+        let tWidth = fontSignature.widthOfTextAtSize(safeSigName, finalSize);
+        if (tWidth > 200) { finalSize = 50 * (200 / tWidth); tWidth = fontSignature.widthOfTextAtSize(safeSigName, finalSize); }
+        page.drawText(safeSigName, { x: xPos + 100 - (tWidth/2), y: yPos + 15, size: finalSize, font: fontSignature, color: black });
       }
     
       page.drawLine({ start: { x: xPos, y: yPos }, end: { x: xPos + 200, y: yPos }, thickness: 1, color: navy });
