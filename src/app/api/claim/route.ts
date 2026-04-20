@@ -50,6 +50,7 @@ export async function POST(request: Request) {
       signatory2Title: webinar.signatory2Title,
       signature2Image: webinar.signature2Image,
       templateId: webinar.templateId || "template1",
+      contactHours: webinar.contactHours,
     });
 
     // Return the generated PDF directly as a download

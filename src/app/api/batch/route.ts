@@ -85,7 +85,8 @@ export async function POST(request: Request) {
                 certificateType: settings.certificateType,
                 presentedBy: settings.presentedBy,
                 presentationDate: settings.presentationDate,
-                templateId: (settings as any).templateId || "template1"
+                templateId: (settings as any).templateId || "template1",
+                contactHours: settings.contactHours,
             });
 
             // Prepare DB record

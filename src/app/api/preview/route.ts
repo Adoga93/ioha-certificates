@@ -21,6 +21,7 @@ export async function POST(request: Request) {
       signatory2Title: body.signatory2Title || "Chairman Education Affairs IOHA",
       signature2Image: body.signature2Image || null,
       templateId: body.templateId || "template1",
+      contactHours: body.contactHours || "60 CPD minutes",
     });
 
     // Return the generated PDF directly

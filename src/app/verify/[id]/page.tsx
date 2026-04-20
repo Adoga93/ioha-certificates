@@ -65,6 +65,12 @@ export default async function VerifyPage(props: { params: Promise<{ id: string }
                                 <p className="text-sm font-semibold opacity-50 uppercase tracking-wider">Webinar / Event Focus</p>
                                 <p className="font-medium text-lg text-ioha-navy">{webinar.webinarName}</p>
                             </div>
+                            {webinar.presentedBy && (
+                                <div className="col-span-2">
+                                    <p className="text-sm font-semibold opacity-50 uppercase tracking-wider">Presented By</p>
+                                    <p className="font-medium text-lg text-ioha-navy">{webinar.presentedBy}</p>
+                                </div>
+                            )}
                             {webinar.presentationDate && (
                                 <div>
                                     <p className="text-sm font-semibold opacity-50 uppercase tracking-wider">Held On</p>

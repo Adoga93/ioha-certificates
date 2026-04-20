@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 
 export default function AdminSettings() {
     const [webinars, setWebinars] = useState<any[]>([]);
+    const [editingWebinarId, setEditingWebinarId] = useState<string | null>(null);
     
     // Webinar Form State
     const [webinarName, setWebinarName] = useState("");
@@ -73,13 +74,15 @@ export default function AdminSettings() {
             .catch(console.error);
     }, []);
 
-    const handleCreate = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setSaved(false);
         try {
-            const res = await fetch('/api/webinars', {
-                method: 'POST',
+            const url = editingWebinarId ? `/api/webinars/${editingWebinarId}` : '/api/webinars';
+            const method = editingWebinarId ? 'PUT' : 'POST';
+            const res = await fetch(url, {
+                method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     webinarName,
@@ -97,19 +100,48 @@ export default function AdminSettings() {
                     contactHours,
                 })
             });
-            if (!res.ok) throw new Error("Failed to create webinar");
+            if (!res.ok) throw new Error("Failed to save webinar");
             setSaved(true);
+            
             setWebinarName("");
             setWebinarBanner(null);
+            if (editingWebinarId) {
+                setEditingWebinarId(null);
+            }
+            
             fetchWebinars();
             setTimeout(() => setSaved(false), 3000);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
             console.error(err);
-            alert("Error creating webinar");
+            alert("Error saving webinar");
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEditClick = (w: any) => {
+        setEditingWebinarId(w.webinarId);
+        setWebinarName(w.webinarName || "");
+        setWebinarBanner(w.webinarBannerImage || null);
+        setName(w.signatoryName || "M. Olota");
+        setTitle(w.signatoryTitle || "IOHA President");
+        setType(w.certificateType || "Of Attendance At");
+        setSignature(w.signatureImage || null);
+        setName2(w.signatory2Name || "Chairman");
+        setTitle2(w.signatory2Title || "Chairman Education Affairs IOHA");
+        setSignature2(w.signature2Image || null);
+        setPresentedBy(w.presentedBy || "IOHA Training Committee");
+        setPresentationDate(w.presentationDate || "");
+        setTemplateId(w.templateId || "template1");
+        setContactHours(w.contactHours || "60 CPD minutes");
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    };
+
+    const cancelEdit = () => {
+        setEditingWebinarId(null);
+        setWebinarName("");
+        setWebinarBanner(null);
     };
 
     const handleDelete = async (id: string) => {
@@ -228,6 +260,12 @@ export default function AdminSettings() {
                                                 View Report
                                             </a>
                                             <button 
+                                                onClick={() => handleEditClick(w)}
+                                                className="bg-gray-100 hover:bg-gray-200 text-ioha-navy px-4 py-2 rounded font-medium text-sm transition-colors text-center mt-1"
+                                            >
+                                                Edit Webinar
+                                            </button>
+                                            <button 
                                                 onClick={() => handleDelete(w.webinarId)}
                                                 className="text-xs text-red-500 hover:text-red-700 underline font-medium text-center mt-1 transition-colors"
                                             >
@@ -241,14 +279,14 @@ export default function AdminSettings() {
                     )}
                 </section>
 
-                {/* Create New Webinar Section */}
+                {/* Create/Edit Webinar Section */}
                 <section>
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight mb-2">Create a New Webinar</h2>
-                        <p className="opacity-70 mb-6">Configure a new certificate template and generate a unique claim link.</p>
+                        <h2 className="text-3xl font-bold tracking-tight mb-2">{editingWebinarId ? `Edit Webinar: ${webinarName}` : "Create a New Webinar"}</h2>
+                        <p className="opacity-70 mb-6">{editingWebinarId ? "Update your template override settings." : "Configure a new certificate template and generate a unique claim link."}</p>
                     </div>
 
-                    <form onSubmit={handleCreate} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
+                    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
                         
                         {/* Webinar Details */}
                         <div className="space-y-6">
@@ -404,7 +442,17 @@ export default function AdminSettings() {
                         </div>
 
                         <div className="pt-6 flex flex-col sm:flex-row items-center justify-end gap-4 mt-8 border-t border-gray-100">
-                            {saved && <span className="text-green-600 font-medium text-sm">✓ Created Successfully</span>}
+                            {saved && <span className="text-green-600 font-medium text-sm">✓ {editingWebinarId ? "Updated" : "Created"} Successfully</span>}
+                            
+                            {editingWebinarId && (
+                                <button
+                                    type="button"
+                                    onClick={cancelEdit}
+                                    className="w-full sm:w-auto bg-gray-100 text-gray-700 px-8 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                            )}
                             
                             <button
                                 type="button"
@@ -420,7 +468,7 @@ export default function AdminSettings() {
                                 disabled={loading || !webinarName}
                                 className="w-full sm:w-auto bg-ioha-gold text-white px-8 py-3 rounded-lg font-bold shadow hover:shadow-lg transition-all disabled:opacity-50"
                             >
-                                {loading ? "Creating..." : "Publish & Generate Link"}
+                                {loading ? "Saving..." : (editingWebinarId ? "Update Webinar" : "Publish & Generate Link")}
                             </button>
                         </div>
                     </form>
