@@ -65,11 +65,19 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   const qrDims = qrImage.scale(0.3);
 
   // Helper for embedded logo
-  const logoPath = path.join(process.cwd(), 'public', 'ioha-logo.jpg');
   let logoImage = null;
   let logoDims = null;
   try {
-    const logoBytes = fs.readFileSync(logoPath);
+    let logoBytes: Uint8Array | Buffer;
+    try {
+      const response = await fetch(`${baseUrl}/ioha-logo.jpg`);
+      if (!response.ok) throw new Error("Fetch failed");
+      const arrayBuffer = await response.arrayBuffer();
+      logoBytes = new Uint8Array(arrayBuffer);
+    } catch (fetchErr) {
+      const logoPath = path.join(process.cwd(), 'public', 'ioha-logo.jpg');
+      logoBytes = fs.readFileSync(logoPath);
+    }
     logoImage = await pdfDoc.embedJpg(logoBytes);
     logoDims = logoImage.scaleToFit(120, 70);
   } catch (e) {
